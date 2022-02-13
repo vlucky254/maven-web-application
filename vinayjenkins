@@ -1,5 +1,5 @@
  node {
-		  
+		properties([buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')), [$class: 'JobLocalConfiguration', changeReasonComment: ''], pipelineTriggers([upstream('facebook-dev, ')])])  
 		  def mavenhome = tool name:"maven3.8.4"
 		  
 		  
