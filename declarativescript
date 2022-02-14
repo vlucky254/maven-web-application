@@ -1,0 +1,43 @@
+pipeline{
+//startpipeline
+agentany
+tools {
+  maven 'maven3.8.4'
+}
+stages{
+//stages starting
+
+//checkoutcode
+stage('checkout code'){
+steps{
+git credentialsId: '85d98ae0-7135-4fe1-8b61-756f866eb384', url: 'https://github.com/vlucky254/maven-web-application.git'
+}
+}
+//build
+stage('Build'){
+steps{
+sh "mvn clean package"
+}
+}
+//Execute sonarqube repo
+stage('Execute sonarqube repo'){
+steps{
+sh "mvn sonar:sonar"
+}
+}
+//Upload Artifact into Artifactory Repo
+stage('Upload Artifact into Artifactory Repo'){
+steps{
+sh "mvn deploy"
+}
+}
+//Deploy into Tomcat
+stage('Deploy into Tomcat'){
+steps{
+sshagent(['c0c6ac00-b6e5-465c-b6b8-47ad1b66ec1d']) {
+    sh "scp -o  StrictHostKeyChecking=no target/maven-web-application.war  ec2-user@3.110.148.45:/opt/apache-tomcat-9.0.58/webapps"
+}
+}
+}
+}//stages closing
+}//closingpipeline
